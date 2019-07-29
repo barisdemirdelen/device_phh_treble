@@ -12,3 +12,24 @@ on property:sys.boot_completed=1
     start phh_on_boot
     chown wifi system /data/misc/wifi
     chown system wifi /data/misc/wifi/hostapd.conf
+
+service hi3650_cameradaemon /system/bin/cameradaemon-hi3650.sh
+	user root
+	group root
+	disabled
+
+service hi3650_cameraserver /system/bin/cameraserver-hi3650.sh
+	user root
+	group root
+	disabled
+
+service hi3650_camerainit /system/bin/camerainit-hi3650.sh
+	user root
+	group root
+	disabled
+	oneshot
+	
+on property:ro.hardware=hi3650 && property:sys.boot_completed=1
+	start hi3650_camerainit
+
+
