@@ -15,7 +15,7 @@ fi
 echo 'PRODUCT_MAKEFILES := \' > AndroidProducts.mk
 
 for part in a ab;do
-	for apps in vanilla gapps foss gapps-go;do
+	for apps in vanilla gapps foss gapps-go e;do
 		for arch in arm64 arm a64;do
 			for su in yes no;do
 				apps_suffix=""
@@ -42,6 +42,10 @@ for part in a ab;do
 					apps_suffix="v"
 					apps_script=''
 					apps_name="vanilla"
+				fi
+				if [ "$apps" == "e" ];then
+					apps_suffix="e"
+					extra_packages+=' GmsCore GsfProxy FakeStore com.google.android.maps.jar Mail BlissLauncher BlissIconPack MozillaNlpBackend OpenWeatherMapWeatherProvider AccountManager MagicEarth OpenCamera eDrive Weather Tasks NominatimNlpBackend DroidGuard OpenKeychain Message Browser BrowserWebView Apps'
 				fi
 				if [ "$arch" == "arm" ];then
 					vndk="vndk-binder32.mk"
