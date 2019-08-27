@@ -101,7 +101,8 @@ PRODUCT_PACKAGES += \
 	vendor.qti.qcril.am-V1.0-java \
 
 PRODUCT_COPY_FILES += \
-	device/phh/treble/interfaces.xml:system/etc/permissions/interfaces.xml
+	device/phh/treble/interfaces.xml:system/etc/permissions/interfaces.xml \
+        device/phh/treble/phh_permission.xml:system/etc/permissions/phh_permission.xml
 
 PRODUCT_COPY_FILES += \
 	device/phh/treble/files/samsung-gpio_keys.kl:system/phh/samsung-gpio_keys.kl \
