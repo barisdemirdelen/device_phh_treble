@@ -22,7 +22,7 @@ for part in a ab;do
 				apps_script=""
 				apps_name=""
 				extra_packages=""
-				product_name_prefix=""
+				target_prefix=""
                 vndk="vndk.mk"
 				if [ "$apps" == "gapps" ];then
 					apps_suffix="g"
@@ -46,7 +46,7 @@ for part in a ab;do
 				fi
 				if [ "$apps" == "e" ];then
 					apps_suffix="e"
-					product_name_prefix="lineage_"
+					target_prefix="lineage_"
 					extra_packages+=' GmsCore GsfProxy FakeStore com.google.android.maps.jar Mail BlissLauncher BlissIconPack MozillaNlpBackend OpenWeatherMapWeatherProvider AccountManager MagicEarth OpenCamera eDrive Weather Tasks NominatimNlpBackend DroidGuard OpenKeychain Message Browser BrowserWebView Apps'
 				fi
 				if [ "$arch" == "arm" ];then
@@ -67,8 +67,7 @@ for part in a ab;do
 					part_suffix='b'
 				fi
 
-				target="treble_${arch}_${part_suffix}${apps_suffix}${su_suffix}"
-
+				target=${target_prefix}"treble_${arch}_${part_suffix}${apps_suffix}${su_suffix}"
 				cat > ${target}.mk << EOF
 \$(call inherit-product, device/phh/treble/base-pre.mk)
 include build/make/target/product/treble_common.mk
@@ -77,7 +76,7 @@ include build/make/target/product/treble_common.mk
 $apps_script
 $rom_script
 
-PRODUCT_NAME := ${product_name_prefix}${target}
+PRODUCT_NAME := ${target}
 PRODUCT_DEVICE := phhgsi_${arch}_$part
 PRODUCT_BRAND := Android
 PRODUCT_MODEL := Phh-Treble $apps_name

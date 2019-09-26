@@ -1,3 +1,4 @@
 .*.swp
 treble_*mk
+lineage_treble*.mk
 AndroidProducts.mk
