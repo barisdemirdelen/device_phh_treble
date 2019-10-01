@@ -77,7 +77,7 @@ $apps_script
 $rom_script
 
 PRODUCT_NAME := ${target}
-PRODUCT_DEVICE := phhgsi_${arch}_$part
+PRODUCT_DEVICE := treble_${arch}_${part_suffix}${apps_suffix}${su_suffix}
 PRODUCT_BRAND := Android
 PRODUCT_MODEL := Phh-Treble $apps_name
 
