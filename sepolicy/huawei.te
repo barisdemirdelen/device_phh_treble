@@ -1,1 +1,185 @@
 allow ueventd proc:file r_file_perms;
+
+type displayengine_hwservice, hwservice_manager_type;
+
+type cameradaemon_prop, fs_type, sysfs_type;
+type hal_ext_fingerprint_hwservice, fs_type, sysfs_type;
+type hinetmanager, fs_type, sysfs_type;
+type hisee_blkdev, fs_type, sysfs_type;
+type hwemerffu_file, fs_type, sysfs_type;
+type mnt_modem_file, fs_type, sysfs_type;
+type modem_fw_file, fs_type, sysfs_type;
+type modem_nv_file, fs_type, sysfs_type;
+type modem_secure_file, fs_type, sysfs_type;
+type odm_xml_file, fs_type, sysfs_type;
+type sys_block_sdd, fs_type, sysfs_type;
+type teecd_data_file_system, fs_type, sysfs_type;
+type default_hisi_hwservice, fs_type, sysfs_type;
+type hal_tp_default, fs_type, sysfs_type;
+type hal_wifi_hostapd_default, fs_type, sysfs_type;
+type cust_data_file, fs_type, sysfs_type;
+type splash2_data_file, fs_type, sysfs_type;
+type teecd_data_file, fs_type, sysfs_type;
+type modem_log_file, fs_type, sysfs_type;
+
+
+type hal_camera_default, domain;
+type hal_fingerprint_default, domain;
+type hal_audio_default, domain;
+type hal_sensors_default, domain;
+type hal_nfc_default, domain;
+type hwemerffu_service, domain;
+type mac_addr_normalization, domain;
+type oeminfo_nvm, domain;
+type pmom_cat, domain;
+type sysfs_led, domain;
+type untrusted_app_visible_hisi_hwservice, domain;
+type gpsdaemon, domain;
+type hal_wifi_default, domain;
+type uniperf, domain;
+type fusd, domain;
+
+# typealias hal_camera_default alias cameradaemon;
+
+#============= nfc ==============
+allow nfc device:file read;
+
+#============= priv_app ==============
+allow priv_app device:file read;
+allow priv_app modem_nv_file:filesystem getattr;
+allow priv_app radio_data_file:filesystem getattr;
+allow priv_app splash2_data_file:filesystem getattr;
+allow priv_app teecd_data_file:filesystem getattr;
+
+#============= shell ==============
+allow shell device:file read;
+allow shell init_exec:file getattr;
+allow shell modem_log_file:dir getattr;
+allow shell modem_nv_file:dir getattr;
+allow shell teecd_data_file:dir getattr;
+allow shell unlabeled:dir getattr;
+
+#============= system_app ==============
+allow system_app default_android_hwservice:hwservice_manager find;
+allow system_app device:file read;
+
+#============= untrusted_app ==============
+allow untrusted_app device:file read;
+
+#============= untrusted_app_25 ==============
+allow untrusted_app_25 device:file read;
+
+#============= bluetooth ==============
+allow bluetooth device:file read;
+
+#============= cameradaemon ==============
+allow hal_camera_default device:chr_file write;
+
+#============= cameraserver ==============
+allow cameraserver device:chr_file write;
+
+#============= dex2oat ==============
+allow dex2oat device:file read;
+
+#============= dexoptanalyzer ==============
+allow dexoptanalyzer device:file read;
+allow dexoptanalyzer system_data_file:lnk_file read;
+
+#============= fsck ==============
+allow fsck block_device:blk_file { read write };
+
+#============= hal_audio_default ==============
+allow hal_audio_default hal_broadcastradio_hwservice:hwservice_manager find;
+
+#============= hal_fingerprint_default ==============
+allow hal_fingerprint_default device:chr_file write;
+
+#============= hal_sensors_default ==============
+allow hal_sensors_default device:chr_file write;
+
+#============= hwservicemanager ==============
+allow hwservicemanager device:file read;
+
+#============= init ==============
+allow init device:lnk_file relabelto;
+allow init device:chr_file write;
+allow init system_file:dir relabelfrom;
+allow init system_file:file relabelfrom;
+
+#============= installd ==============
+allow installd radio_data_file:filesystem quotaget;
+
+#============= kernel ==============
+allow kernel device:chr_file write;
+
+#============= logd ==============
+allow logd device:file read;
+
+#============= nfc ==============
+allow nfc device:file open;
+
+#============= phhsu_daemon ==============
+allow phhsu_daemon vendor_file:file mounton;
+
+#============= platform_app ==============
+allow platform_app device:file read;
+
+#============= priv_app ==============
+allow priv_app device:file open;
+allow priv_app sysfs:file read;
+
+#============= profman ==============
+allow profman device:file read;
+
+#============= radio ==============
+allow radio default_android_hwservice:hwservice_manager find;
+allow radio device:file read;
+
+#============= servicemanager ==============
+allow servicemanager device:file read;
+
+#============= shared_relro ==============
+allow shared_relro device:file read;
+
+#============= shell ==============
+allow shell device:file open;
+
+#============= surfaceflinger ==============
+allow surfaceflinger device:file read;
+
+#============= system_app ==============
+allow system_app device:file open;
+
+#============= system_server ==============
+allow system_server default_android_hwservice:hwservice_manager find;
+allow system_server device:file read;
+allow system_server sysfs:file read;
+allow system_server vfat:dir { open read };
+
+#============= untrusted_app ==============
+allow untrusted_app device:file open;
+allow untrusted_app hal_memtrack_hwservice:hwservice_manager find;
+allow untrusted_app proc_version:file read;
+allow untrusted_app sysfs_leds:dir search;
+
+#============= untrusted_app_25 ==============
+allow untrusted_app_25 device:file open;
+
+#============= untrusted_app_27 ==============
+allow untrusted_app_27 device:file read;
+
+#============= vndk_detect ==============
+allow vndk_detect proc_filesystems:file read;
+allow vndk_detect tmpfs:lnk_file read;
+
+#============= vndservicemanager ==============
+allow vndservicemanager device:chr_file write;
+allow vndservicemanager device:file read;
+
+#============= vold ==============
+allow vold radio_data_file:dir read;
+
+#============= zygote ==============
+allow zygote device:file read;
+
+
