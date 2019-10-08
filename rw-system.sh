@@ -59,7 +59,7 @@ changeKeylayout() {
     changed=false
 
     if getprop ro.vendor.build.fingerprint |
-        grep -qE -e ".*(crown|star)[q2]*lte.*" -e ".*(SC-0[23]K|SCV3[89]).*"; then
+        grep -qE -e "^samsung"; then
         changed=true
 
         cp /system/phh/samsung-gpio_keys.kl /mnt/phh/keylayout/gpio_keys.kl
@@ -112,7 +112,11 @@ changeKeylayout() {
 if mount -o remount,rw /system; then
     resize2fs "$(grep ' /system ' /proc/mounts | cut -d ' ' -f 1)" || true
 elif mount -o remount,rw /; then
+    major="$(stat -c '%D' /.|sed -E 's/^([0-9a-f]+)([0-9a-f]{2})$/\1/g')"
+    minor="$(stat -c '%D' /.|sed -E 's/^([0-9a-f]+)([0-9a-f]{2})$/\2/g')"
+    mknod /dev/tmp-phh b $((0x$major)) $((0x$minor))
     resize2fs /dev/root || true
+    resize2fs /dev/tmp-phh || true
 fi
 
 
@@ -208,7 +212,7 @@ if getprop ro.vendor.build.fingerprint | grep -iq \
     -e motorola/ali/ali -e iaomi/perseus/perseus -e iaomi/platina/platina \
     -e iaomi/equuleus/equuleus -e motorola/nora -e xiaomi/nitrogen \
     -e motorola/hannah -e motorola/james -e motorola/pettyl -e iaomi/cepheus \
-    -e iaomi/grus -e xiaomi/cereus -e iaomi/raphael;then
+    -e iaomi/grus -e xiaomi/cereus -e iaomi/raphael -e iaomi/davinci;then
     mount -o bind /mnt/phh/empty_dir /vendor/lib64/soundfx
     mount -o bind /mnt/phh/empty_dir /vendor/lib/soundfx
     setprop  ro.audio.ignore_effects true
@@ -245,6 +249,12 @@ fi
 
 for f in /vendor/lib/mtk-ril.so /vendor/lib64/mtk-ril.so /vendor/lib/libmtk-ril.so /vendor/lib64/libmtk-ril.so; do
     [ ! -f $f ] && continue
+
+    setprop persist.sys.phh.radio.force_cognitive true
+    setprop persist.sys.radio.ussd.fix true
+
+    if getprop persist.sys.mtk.disable.incoming.fix | grep -q 1; then break; fi
+
     # shellcheck disable=SC2010
     ctxt="$(ls -lZ "$f" | grep -oE 'u:object_r:[^:]*:s0')"
     b="$(echo "$f" | tr / _)"
@@ -255,9 +265,6 @@ for f in /vendor/lib/mtk-ril.so /vendor/lib64/mtk-ril.so /vendor/lib/libmtk-ril.
         "/mnt/phh/$b"
     chcon "$ctxt" "/mnt/phh/$b"
     mount -o bind "/mnt/phh/$b" "$f"
-
-    setprop persist.sys.phh.radio.force_cognitive true
-    setprop persist.sys.radio.ussd.fix true
 done
 
 mount -o bind /system/phh/empty /vendor/overlay/SysuiDarkTheme/SysuiDarkTheme.apk || true
@@ -283,11 +290,11 @@ if busybox_phh unzip -p /vendor/app/ims/ims.apk classes.dex | grep -qF -e Landro
     mount -o bind /system/phh/empty /vendor/app/ims/ims.apk
 fi
 
-if getprop ro.hardware | grep -qF samsungexynos; then
+if getprop ro.hardware | grep -qF samsungexynos -e mt6771; then
     setprop debug.sf.latch_unsignaled 1
 fi
 
-if getprop ro.product.model | grep -qF ANE; then
+if getprop ro.product.model | grep -qF -e ANE; then
     setprop debug.sf.latch_unsignaled 1
 fi
 
@@ -363,4 +370,71 @@ done
 
 if [ -n "$(getprop ro.boot.product.hardware.sku)" ] && [ -z "$(getprop ro.hw.oemName)" ];then
 	setprop ro.hw.oemName "$(getprop ro.boot.product.hardware.sku)"
+fi
+
+if getprop ro.vendor.build.fingerprint | grep -qiE '^samsung/' && [ "$vndk" -ge 28 ];then
+	setprop persist.sys.phh.samsung_fingerprint 0
+	#obviously broken perms
+	if [ "$(stat -c '%A' /sys/class/sec/tsp/ear_detect_enable)" == "-rw-rw-r--" ] &&
+		[ "$(stat -c '%U' /sys/class/sec/tsp/ear_detect_enable)" == "root" ] &&
+		[ "$(stat -c '%G' /sys/class/sec/tsp/ear_detect_enable)" == "root" ];then
+
+		chcon u:object_r:sysfs_ss_writable:s0 /sys/class/sec/tsp/ear_detect_enable
+		chown system /sys/class/sec/tsp/ear_detect_enable
+
+		chcon u:object_r:sysfs_ss_writable:s0 /sys/class/sec/tsp/cmd{,_list,_result,_status}
+		chown system /sys/class/sec/tsp/cmd{,_list,_result,_status}
+
+		chown system /sys/class/power_supply/battery/wc_tx_en
+		chcon u:object_r:sysfs_app_writable:s0 /sys/class/power_supply/battery/wc_tx_en
+
+	fi
+
+	if [ "$(stat -c '%U' /sys/class/sec/tsp/input/enabled)" == "root" ] &&
+		[ "$(stat -c '%G' /sys/class/sec/tsp/input/enabled)" == "root" ];then
+			chown system:system /sys/class/sec/tsp/input/enabled
+			chcon u:object_r:sysfs_ss_writable:s0 /sys/class/sec/tsp/input/enabled
+			setprop ctl.restart sec-miscpower-1-0
+	fi
+fi
+
+if [ -f /system/phh/secure ];then
+    copyprop() {
+        p="$(getprop "$2")"
+        if [ "$p" ]; then
+            resetprop "$1" "$(getprop "$2")"
+        fi
+    }
+
+    copyprop ro.build.device ro.vendor.build.device
+    copyprop ro.bootimage.build.fingerprint ro.vendor.build.fingerprint
+    copyprop ro.build.fingerprint ro.vendor.build.fingerprint
+    copyprop ro.build.device ro.vendor.product.device
+    copyprop ro.product.device ro.vendor.product.device
+    copyprop ro.product.device ro.product.vendor.device
+    copyprop ro.product.name ro.vendor.product.name
+    copyprop ro.product.name ro.product.vendor.device
+    copyprop ro.product.brand ro.vendor.product.brand
+    copyprop ro.product.model ro.vendor.product.model
+    copyprop ro.product.model ro.product.vendor.model
+    copyprop ro.build.product ro.vendor.product.model
+    copyprop ro.build.product ro.product.vendor.model
+    copyprop ro.product.manufacturer ro.vendor.product.manufacturer
+    copyprop ro.product.manufacturer ro.product.vendor.manufacturer
+    copyprop ro.build.version.security_patch ro.keymaster.xxx.security_patch
+    copyprop ro.build.version.security_patch ro.vendor.build.security_patch
+    resetprop ro.build.tags release-keys
+    resetprop ro.boot.vbmeta.device_state locked
+    resetprop ro.boot.verifiedbootstate green
+    resetprop ro.boot.flash.locked 1
+    resetprop ro.boot.veritymode enforcing
+    resetprop ro.boot.warranty_bit 0
+    resetprop ro.warranty_bit 0
+    resetprop ro.debuggable 0
+    resetprop ro.secure 1
+    resetprop ro.build.type user
+    resetprop ro.build.selinux 0
+
+    resetprop ro.adb.secure 1
+    setprop ctl.restart adbd
 fi

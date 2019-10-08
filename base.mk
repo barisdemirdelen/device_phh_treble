@@ -140,4 +140,7 @@ PRODUCT_PACKAGES += \
 	Stk
 
 PRODUCT_PACKAGES += \
-	ch.deletescape.lawnchair.plah
+	resetprop
+PRODUCT_COPY_FILES += \
+	device/phh/treble/phh-securize.sh:system/bin/phh-securize.sh \
+

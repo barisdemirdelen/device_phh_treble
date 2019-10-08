@@ -9,6 +9,15 @@ if [ -f /vendor/bin/mtkmal ];then
     fi
 fi
 
+if grep -qF android.hardware.boot /vendor/manifest.xml || grep -qF android.hardware.boot /vendor/etc/vintf/manifest.xml ;then
+	bootctl mark-boot-successful
+fi
+
+setprop ctl.restart sec-light-hal-2-0
+if find /sys/firmware -name support_fod |grep -qE .;then
+	setprop ctl.restart vendor.fps_hal
+fi
+
 #Clear looping services
 sleep 30
 getprop | \
@@ -17,7 +26,3 @@ getprop | \
     while read -r svc ;do
         setprop ctl.stop "$svc"
     done
-
-if grep -qF android.hardware.boot /vendor/manifest.xml || grep -qF android.hardware.boot /vendor/etc/vintf/manifest.xml ;then
-	bootctl mark-boot-successful
-fi
