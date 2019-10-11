@@ -210,11 +210,6 @@ PRODUCT_COPY_FILES += \
 	openkirinaddons/lib/sphal-compat/libziparchive.so:system/lib/sphal-compat/libziparchive.so \
 	openkirinaddons/lib/libui.so:system/lib/libui.so
 
-
-
-
-PRODUCT_PACKAGES = \
-	resetprop
-PRODUCT_COPY_FILES = \
+PRODUCT_COPY_FILES += \
 	device/phh/treble/phh-securize.sh:system/bin/phh-securize.sh \
 
