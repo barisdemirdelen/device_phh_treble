@@ -10,7 +10,7 @@ PRODUCT_COPY_FILES := \
 PRODUCT_COPY_FILES += \
 	device/sample/etc/apns-full-conf.xml:system/etc/apns-conf.xml
 
-BOARD_PLAT_PRIVATE_SEPOLICY_DIR = device/phh/treble/sepolicy
+BOARD_PLAT_PRIVATE_SEPOLICY_DIR += device/phh/treble/sepolicy
 DEVICE_PACKAGE_OVERLAYS += \
 	device/phh/treble/overlay \
 	device/phh/treble/overlay-lineage
@@ -138,6 +138,9 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
 	Stk
+
+PRODUCT_PACKAGES += \
+	resetprop
 
 PRODUCT_PACKAGES += \
 	 HwCamera2 \
