@@ -125,6 +125,27 @@ elif mount -o remount,rw /; then
     resize2fs /dev/root || true
     resize2fs /dev/tmp-phh || true
 fi
+
+
+
+if [ "$(getprop ro.hardware)" = "hi3650" ]; then
+    libs=( "android.hardware.camera.common@1.0.so" "android.hardware.configstore@1.0.so" "libcamera_metadata.so" "libnativebridge.so" "libpng.so" "libziparchive.so" "android.hardware.camera.device@1.0.so" "android.hardware.configstore-utils.so" "libdng_sdk.so" "libicui18n.so" "libnativehelper.so" "libskia.so" "android.hardware.camera.device@3.2.so" "android.hidl.allocator@1.0.so" "libexpat.so" "libicuuc.so" "libnativeloader.so" "libui.so" "android.hardware.camera.provider@2.4.so" "libbinder.so" "libfmq.so" "libjpeg.so" "libvulkan.so" "libpiex.so" )
+
+    mkdir /system/lib/sphal-compat || true
+    for lib in "${libs[@]}"
+        do
+           : 
+           touch /system/lib/sphal-compat/$lib || true
+           chmod 644 /system/lib/sphal-compat/$lib
+           mount -o bind /system/lib/vndk-26/$lib /system/lib/sphal-compat/$lib || true
+        done
+    touch /system/lib/sphal-compat/libft2.so || true
+    mount -o bind /system/lib/libft2.so /system/lib/sphal-compat/libft2.so || true
+    chmod 755 /system/lib/sphal-compat
+fi
+
+
+
 mount -o remount,ro /system || true
 mount -o remount,ro / || true
 
@@ -198,7 +219,7 @@ if getprop ro.vendor.build.fingerprint | grep -iq \
     -e motorola/ali/ali -e iaomi/perseus/perseus -e iaomi/platina/platina \
     -e iaomi/equuleus/equuleus -e motorola/nora -e xiaomi/nitrogen \
     -e motorola/hannah -e motorola/james -e motorola/pettyl -e iaomi/cepheus \
-    -e iaomi/grus -e xiaomi/cereus -e iaomi/raphael;then
+    -e iaomi/grus -e xiaomi/cereus -e iaomi/raphael -e iaomi/davinci;then
     mount -o bind /mnt/phh/empty_dir /vendor/lib64/soundfx
     mount -o bind /mnt/phh/empty_dir /vendor/lib/soundfx
     setprop  ro.audio.ignore_effects true
@@ -235,6 +256,12 @@ fi
 
 for f in /vendor/lib/mtk-ril.so /vendor/lib64/mtk-ril.so /vendor/lib/libmtk-ril.so /vendor/lib64/libmtk-ril.so; do
     [ ! -f $f ] && continue
+
+    setprop persist.sys.phh.radio.force_cognitive true
+    setprop persist.sys.radio.ussd.fix true
+
+    if getprop persist.sys.mtk.disable.incoming.fix | grep -q 1; then break; fi
+
     # shellcheck disable=SC2010
     ctxt="$(ls -lZ "$f" | grep -oE 'u:object_r:[^:]*:s0')"
     b="$(echo "$f" | tr / _)"
@@ -245,9 +272,6 @@ for f in /vendor/lib/mtk-ril.so /vendor/lib64/mtk-ril.so /vendor/lib/libmtk-ril.
         "/mnt/phh/$b"
     chcon "$ctxt" "/mnt/phh/$b"
     mount -o bind "/mnt/phh/$b" "$f"
-
-    setprop persist.sys.phh.radio.force_cognitive true
-    setprop persist.sys.radio.ussd.fix true
 done
 
 mount -o bind /system/phh/empty /vendor/overlay/SysuiDarkTheme/SysuiDarkTheme.apk || true
@@ -273,11 +297,11 @@ if busybox_phh unzip -p /vendor/app/ims/ims.apk classes.dex | grep -qF -e Landro
     mount -o bind /system/phh/empty /vendor/app/ims/ims.apk
 fi
 
-if getprop ro.hardware | grep -qF samsungexynos; then
+if getprop ro.hardware | grep -qF samsungexynos -e mt6771; then
     setprop debug.sf.latch_unsignaled 1
 fi
 
-if getprop ro.product.model | grep -qF ANE; then
+if getprop ro.product.model | grep -qF -e ANE; then
     setprop debug.sf.latch_unsignaled 1
 fi
 

@@ -1,3 +1,7 @@
+on init
+  # mount none /dev/null /vendor/etc/init/vendor.huawei.hardware.hisupl@1.0-service.rc bind
+  export LD_SHIM_LIBS /system/lib64/libdisplayenginesvc_1_0.so|libshims_hwsmartdisplay_jni.so:/system/lib64/libdisplayenginesvc_1_1.so|libshims_hwsmartdisplay_jni.so:/system/lib64/libhwsmartdisplay_jni.so|libshims_hwsmartdisplay_jni.so:/system/lib64/libhwpwmanager_jni.so|libshims_hwsmartdisplay_jni.so
+
 on post-fs
 	exec - root -- /system/bin/vndk-detect
 	exec - root -- /system/bin/rw-system.sh
@@ -13,5 +17,31 @@ on property:sys.boot_completed=1
     chown wifi system /data/misc/wifi
     chown system wifi /data/misc/wifi/hostapd.conf
 
+service hi3650_cameradaemon /system/bin/cameradaemon-hi3650.sh
+	user root
+	group root
+	disabled
+
+service hi3650_cameraserver /system/bin/cameraserver-hi3650.sh
+	user root
+	group root
+	disabled
+
+service hi3650_camerainit /system/bin/camerainit-hi3650.sh
+	user root
+	group root
+	disabled
+	oneshot
+	
+on property:ro.hardware=hi3650 && property:sys.boot_completed=1
+	start hi3650_camerainit
+
+on property:ro.hardware=hi3650 && on property:sys.boot_completed=1 && property:sys.fastcharging.enabled=1
+    write /sys/class/hw_power/charger/charge_data/iin_thermal 2000
+
+on property:ro.hardware=hi3650 && on property:sys.boot_completed=1 && property:sys.fastcharging.enabled=0
+    write /sys/class/hw_power/charger/charge_data/iin_thermal 1000
+
 on property:persist.sys.phh.mainkeys=*
     setprop qemu.hw.mainkeys ${persist.sys.phh.mainkeys}
+

@@ -11,7 +11,9 @@ PRODUCT_COPY_FILES += \
 	device/sample/etc/apns-full-conf.xml:system/etc/apns-conf.xml
 
 BOARD_PLAT_PRIVATE_SEPOLICY_DIR += device/phh/treble/sepolicy
-DEVICE_PACKAGE_OVERLAYS += device/phh/treble/overlay
+DEVICE_PACKAGE_OVERLAYS += \
+	device/phh/treble/overlay \
+	device/phh/treble/overlay-lineage
 
 $(call inherit-product, vendor/hardware_overlay/overlay.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
@@ -106,6 +108,10 @@ PRODUCT_COPY_FILES += \
 	device/phh/treble/files/huawei-fingerprint.kl:system/phh/huawei/fingerprint.kl \
 	device/phh/treble/files/samsung-sec_e-pen.idc:system/usr/idc/sec_e-pen.idc \
 	device/phh/treble/files/samsung-9810-floating_feature.xml:system/ph/sam-9810-flo_feat.xml \
+	device/phh/treble/files/cam.hi3650.sh:system/bin/cam.hi3650.sh \
+	device/phh/treble/files/cameraserver-hi3650.sh:system/bin/cameraserver-hi3650.sh \
+	device/phh/treble/files/camerainit-hi3650.sh:system/bin/camerainit-hi3650.sh \
+	device/phh/treble/files/cameradaemon-hi3650.sh:system/bin/cameradaemon-hi3650.sh \
 	device/phh/treble/files/mimix3-gpio-keys.kl:system/phh/mimix3-gpio-keys.kl
 
 SELINUX_IGNORE_NEVERALLOWS := true
@@ -134,6 +140,74 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
 	resetprop
+
+PRODUCT_PACKAGES += \
+	 HwCamera2 \
+   HuaweiParts
+
+PRODUCT_COPY_FILES += \
+	openkirinaddons/bin/cameradaemon-hi3650.sh:system/bin/cameradaemon-hi3650.sh \
+	openkirinaddons/bin/camerainit-hi3650.sh:system/bin/camerainit-hi3650.sh \
+	openkirinaddons/bin/cameraserver-hi3650.sh:system/bin/cameraserver-hi3650.sh \
+	openkirinaddons/bin/cam.hi3650.sh:system/bin/cam.hi3650.sh \
+	openkirinaddons/emui/base/global/ons.bin:system/emui/base/global/ons.bin \
+	openkirinaddons/etc/permissions/com.huawei.hwpostcamera.xml:system/etc/permissions/com.huawei.hwpostcamera.xml \
+	openkirinaddons/etc/permissions/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
+	openkirinaddons/etc/permissions/privapp-permissions-hwcamera.xml:system/etc/permissions/privapp-permissions-hwcamera.xml \
+	openkirinaddons/framework/hwpostcamera.jar:system/framework/hwpostcamera.jar \
+	openkirinaddons/lib/libdisplayenginesvc_1_0.so:system/lib/libdisplayenginesvc_1_0.so \
+	openkirinaddons/lib/libHwPostCamera_jni.so:system/lib/libHwPostCamera_jni.so \
+	openkirinaddons/lib/libhwpwmanager_jni.so:system/lib/libhwpwmanager_jni.so \
+	openkirinaddons/lib/libmrc_cg_beauty.so:system/lib/libmrc_cg_beauty.so \
+	openkirinaddons/lib/vendor.huawei.hardware.camera.camResource@1.0.so:system/lib/vendor.huawei.hardware.camera.camResource@1.0.so \
+	openkirinaddons/lib/vendor.huawei.hardware.camera.camResource@1.1.so:system/lib/vendor.huawei.hardware.camera.camResource@1.1.so \
+	openkirinaddons/lib/vendor.huawei.hardware.camera.camResource@1.2.so:system/lib/vendor.huawei.hardware.camera.camResource@1.2.so \
+	openkirinaddons/lib/vendor.huawei.hardware.camera.camResource@1.3.so:system/lib/vendor.huawei.hardware.camera.camResource@1.3.so \
+	openkirinaddons/lib/vendor.huawei.hardware.camera.camResource.orbService@1.0.so:system/lib/vendor.huawei.hardware.camera.camResource.orbService@1.0.so \
+	openkirinaddons/lib/vendor.huawei.hardware.camera.cfgsvr@1.0.so:system/lib/vendor.huawei.hardware.camera.cfgsvr@1.0.so\
+	openkirinaddons/lib/vendor.huawei.hardware.camera.cfgsvr@1.1.so:system/lib/vendor.huawei.hardware.camera.cfgsvr@1.1.so \
+	openkirinaddons/lib/vendor.huawei.hardware.camera.factory@1.0.so:system/lib/vendor.huawei.hardware.camera.factory@1.0.so \
+	openkirinaddons/lib64/libdisplayenginesvc_1_0.so:system/lib64/libdisplayenginesvc_1_0.so \
+	openkirinaddons/lib64/libHwPostCamera_jni.so:system/lib64/libHwPostCamera_jni.so \
+	openkirinaddons/lib64/libhwpwmanager_jni.so:system/lib64/libhwpwmanager_jni.so \
+	openkirinaddons/lib64/libmrc_cg_beauty.so:system/lib64/libmrc_cg_beauty.so \
+	openkirinaddons/lib64/vendor.huawei.hardware.camera.camResource@1.0.so:system/lib64/vendor.huawei.hardware.camera.camResource@1.0.so \
+	openkirinaddons/lib64/vendor.huawei.hardware.camera.camResource@1.1.so:system/lib64/vendor.huawei.hardware.camera.camResource@1.1.so \
+	openkirinaddons/lib64/vendor.huawei.hardware.camera.camResource@1.2.so:system/lib64/vendor.huawei.hardware.camera.camResource@1.2.so \
+	openkirinaddons/lib64/vendor.huawei.hardware.camera.camResource@1.3.so:system/lib64/vendor.huawei.hardware.camera.camResource@1.3.so \
+	openkirinaddons/lib64/vendor.huawei.hardware.camera.camResource.orbService@1.0.so:system/lib64/vendor.huawei.hardware.camera.camResource.orbService@1.0.so \
+	openkirinaddons/lib64/vendor.huawei.hardware.camera.cfgsvr@1.0.so:system/lib64/vendor.huawei.hardware.camera.cfgsvr@1.0.so\
+	openkirinaddons/lib64/vendor.huawei.hardware.camera.cfgsvr@1.1.so:system/lib64/vendor.huawei.hardware.camera.cfgsvr@1.1.so \
+	openkirinaddons/lib64/vendor.huawei.hardware.camera.factory@1.0.so:system/lib64/vendor.huawei.hardware.camera.factory@1.0.so \
+	openkirinaddons/priv-app/HwCamera2/oat/arm/HwCamera2.odex:system/priv-app/HwCamera2/oat/arm/HwCamera2.odex \
+	openkirinaddons/priv-app/HwCamera2/oat/arm/HwCamera2.vdex:system/priv-app/HwCamera2/oat/arm/HwCamera2.vdex \
+	openkirinaddons/lib/sphal-compat/android.hardware.camera.common@1.0.so:system/lib/sphal-compat/android.hardware.camera.common@1.0.so \
+	openkirinaddons/lib/sphal-compat/android.hardware.camera.device@1.0.so:system/lib/sphal-compat/android.hardware.camera.device@1.0.so \
+	openkirinaddons/lib/sphal-compat/android.hardware.camera.device@3.2.so:system/lib/sphal-compat/android.hardware.camera.device@3.2.so \
+	openkirinaddons/lib/sphal-compat/android.hardware.camera.provider@2.4.so:system/lib/sphal-compat/android.hardware.camera.provider@2.4.so \
+	openkirinaddons/lib/sphal-compat/android.hardware.configstore@1.0.so:system/lib/sphal-compat/android.hardware.configstore@1.0.so \
+	openkirinaddons/lib/sphal-compat/android.hardware.configstore-utils.so:system/lib/sphal-compat/android.hardware.configstore-utils.so \
+	openkirinaddons/lib/sphal-compat/android.hidl.allocator@1.0.so:system/lib/sphal-compat/android.hidl.allocator@1.0.so \
+	openkirinaddons/lib/sphal-compat/libbinder.so:system/lib/sphal-compat/libbinder.so \
+	openkirinaddons/lib/sphal-compat/libcamera_metadata.so:system/lib/sphal-compat/libcamera_metadata.so \
+	openkirinaddons/lib/sphal-compat/libdng_sdk.so:system/lib/sphal-compat/libdng_sdk.so \
+	openkirinaddons/lib/sphal-compat/libexpat.so:system/lib/sphal-compat/libexpat.so \
+	openkirinaddons/lib/sphal-compat/libfmq.so:system/lib/sphal-compat/libfmq.so \
+	openkirinaddons/lib/sphal-compat/libft2.so:system/lib/sphal-compat/libft2.so \
+	openkirinaddons/lib/sphal-compat/libicui18n.so:system/lib/sphal-compat/libicui18n.so \
+	openkirinaddons/lib/sphal-compat/libicuuc.so:system/lib/sphal-compat/libicuuc.so \
+	openkirinaddons/lib/sphal-compat/libjpeg.so:system/lib/sphal-compat/libjpeg.so \
+	openkirinaddons/lib/sphal-compat/libnativebridge.so:system/lib/sphal-compat/libnativebridge.so \
+	openkirinaddons/lib/sphal-compat/libnativehelper.so:system/lib/sphal-compat/libnativehelper.so \
+	openkirinaddons/lib/sphal-compat/libnativeloader.so:system/lib/sphal-compat/libnativeloader.so \
+	openkirinaddons/lib/sphal-compat/libpiex.so:system/lib/sphal-compat/libpiex.so \
+	openkirinaddons/lib/sphal-compat/libpng.so:system/lib/sphal-compat/libpng.so \
+	openkirinaddons/lib/sphal-compat/libskia.so:system/lib/sphal-compat/libskia.so \
+	openkirinaddons/lib/sphal-compat/libui.so:system/lib/sphal-compat/libui.so \
+	openkirinaddons/lib/sphal-compat/libvulkan.so:system/lib/sphal-compat/libvulkan.so \
+	openkirinaddons/lib/sphal-compat/libziparchive.so:system/lib/sphal-compat/libziparchive.so \
+	openkirinaddons/lib/libui.so:system/lib/libui.so
+
 PRODUCT_COPY_FILES += \
 	device/phh/treble/phh-securize.sh:system/bin/phh-securize.sh \
 
@@ -142,6 +216,7 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_COPY_FILES += \
         device/phh/treble/ld.config.26.txt:system/etc/ld.config.26.txt \
+	      device/phh/treble/ld.config.hi3650.txt:system/etc/ld.config.hi3650.txt \
 
 PRODUCT_PACKAGES += \
     asus-motor
